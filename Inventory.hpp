@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include "Book.hpp"
+#include "checkResult.h"
 #include <vector>
 
 class Inventory
@@ -22,13 +23,14 @@ private:
 public:
     Inventory();
     
+    void displayAllBookInfo();
+    void displayCheckedOutBooks();
     int getInventorySize();
-    Book* getBookByIndex(int index);
+    Book getBookByIndex(int index);
     void addBook(Book book); // function to add book to inventory
     void removeBook(std::string title); // function to remove book from inventory
     int searchByTitle(std::string title); // funciton to look for book by title
-    void checkOutBook(Book *book); // function to check out book
-    void checkInBook(Book *book); // function to check in book
+    checkResults checkBook(std::string title, bool checkOut); // function to check books in or out
 }; //END Inventory
 
 

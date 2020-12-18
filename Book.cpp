@@ -17,3 +17,23 @@ Book::Book(std::string title, std::string author)
     Book::Author = author; //init book author
     Book::CheckedOut = false;
 }//END Book(id, string title, string author)
+
+void Book::checkInOrOut(bool checkOut)
+{
+    CheckedOut = checkOut;
+}//END checkInOrOut()
+
+void Book::displayBookInfo()
+{
+    std::cout << ID << "\t" << Title << "\t" << Author << std::endl;
+}//END displayBookInfo()
+
+bool Book::isCheckedOut()
+{
+    return CheckedOut;
+}//END isCheckedOut
+
+void Book::setBookID(int id)
+{
+    ID = id;
+}//END setBookID

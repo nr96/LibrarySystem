@@ -9,6 +9,8 @@
 #include <iostream>
 #include "Book.hpp"
 #include "Inventory.hpp"
+#include "checkResult.h"
+
 
 using namespace std;
 
@@ -31,13 +33,7 @@ void addNewBook()
 
 void listInventory()
 {
-    cout << "ID\tTitle\tAuthor" << endl;
-    for (int i=0; i < _inventory.getInventorySize(); i++) // iterate through inventory
-    {
-        // print book[i] info
-        cout << _inventory.getBookByIndex(i)->ID << "\t" << _inventory.getBookByIndex(i)->Title << "\t" << _inventory.getBookByIndex(i)->Author << endl;
-    }//END for
-    cout << endl;
+    _inventory.displayAllBookInfo();
 }//END listInventory
 
 void checkBook(bool checkOut)
@@ -56,34 +52,20 @@ void checkBook(bool checkOut)
     string title;
     getline(cin, title);
     cout << endl;
-    
-    int foundBookIndx =_inventory.searchByTitle(title); //search for book and get index
-    
-    if(foundBookIndx >=0) // if book found
+
+    checkResults result = _inventory.checkBook(title, checkOut);
+    if(result == checkResults::BookNotFound)
     {
-        Book* foundBook = _inventory.getBookByIndex(foundBookIndx); // get pointer to found book
-        
-        if(foundBook->CheckedOut == checkOut) // if book is already checked out
-        {
-            cout << "Book already checked " + checkCommand << endl;
-            return;
-        }//END inner if
-        
-        if(checkOut) // if book is already checked out
-        {
-            _inventory.checkOutBook(foundBook);
-        }//END inner if
-        else
-        {
-            _inventory.checkInBook(foundBook);
-        }//END else
-        
-        cout << "Book checked " + checkCommand << endl;
-    }//END if
+        cout << "Book not found";
+    }
+    else if (result == checkResults::Success)
+    {
+        cout << "Book checked " + checkCommand + "!" << endl;
+    }
     else
     {
-        cout << "Book not found" << endl;
-    }//END else
+        cout << "Book failed checking " + checkCommand + "!" << endl;
+    }
 }
 
 //void checkOutBook()
@@ -155,16 +137,7 @@ void removeBook()
 
 void viewCheckedOutBooks()
 {
-    cout << "ID\tTitle\tAuthor" << endl;
-    for (int i=0; i < _inventory.getInventorySize(); i++) // iterate through inventory
-    {
-        if(_inventory.getBookByIndex(i)->CheckedOut)
-        {
-            // print book[i] info
-            cout << _inventory.getBookByIndex(i)->ID << "\t" << _inventory.getBookByIndex(i)->Title << "\t" << _inventory.getBookByIndex(i)->Author << endl;
-        }//END if
-    }//END for
-    cout << endl;
+    _inventory.displayCheckedOutBooks();
 }//END viewCheckedOutBooks
 
 int main(int argc, const char * argv[])

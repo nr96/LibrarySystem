@@ -26,6 +26,11 @@ public:
     Book();
     Book(std::string title, std::string author);
     
+    void checkInOrOut(bool checkOut);
+    void displayBookInfo();
+    bool isCheckedOut();
+    void setBookID(int id);
+    
     // Overload "=" operator so books can be compared
     bool operator==(const Book &book) const
     {

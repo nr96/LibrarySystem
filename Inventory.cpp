@@ -19,15 +19,15 @@ int Inventory::getInventorySize()
     return Inventory::Books.size();
 }
 
-Book* Inventory::getBookByIndex(int index)
+Book Inventory::getBookByIndex(int index)
 {
-    return &Inventory::Books[index];
+    return Inventory::Books[index];
 }
 
 void Inventory::addBook(Book book)
 {
     Inventory::maxBookID++;
-    book.ID = maxBookID;
+    book.setBookID(maxBookID);
     Inventory::Books.push_back(book);
     
 }//END addBook()
@@ -62,13 +62,39 @@ int Inventory::searchByTitle(std::string title)
     return index;
 }//END searchByTitle()
 
-void Inventory::checkOutBook(Book *book)
+checkResults Inventory::checkBook(std::string title, bool checkOut)
 {
-    book->CheckedOut = true;
-}//END checkOutBook
+    int bookIndex = searchByTitle(title); // find book index by title
+    
+    if(bookIndex < 0)
+    {
+        return checkResults::BookNotFound;
+    }//END if
+    
+    Books[bookIndex].checkInOrOut(checkOut); // check out or in book
+    return checkResults::Success;
+}//END checkBook
 
-void Inventory::checkInBook(Book *book)
+
+void Inventory::displayAllBookInfo()
 {
-    book->CheckedOut = false;
-}//END checkOutBook
+    std::cout << "ID\tTitle\tAuthor" << std::endl;
+    for (int i=0; i < getInventorySize(); i++) // iterate through inventory
+    {
+        Books[i].displayBookInfo();
+    }//END for
+    std::cout << std::endl;
+}//displayAllBookInfo()
 
+void Inventory::displayCheckedOutBooks()
+{
+    std::cout << "ID\tTitle\tAuthor" << std::endl;
+    for (int i=0; i < getInventorySize(); i++) // iterate through inventory
+    {
+        if(getBookByIndex(i).isCheckedOut())
+        {
+            Books[i].displayBookInfo();
+        }//END if
+    }//END for
+    std::cout << std::endl;
+}//END displayCheckedOutBooks()
