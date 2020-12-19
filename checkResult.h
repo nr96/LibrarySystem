@@ -13,6 +13,8 @@ enum class checkResults
 {
     Success,
     BookNotFound,
+    BookAlreadyCheckedOut,
+    BookAlreadyCheckedIn,
     Failure
 };//END checkResults
 

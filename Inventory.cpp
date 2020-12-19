@@ -69,7 +69,18 @@ checkResults Inventory::checkBook(std::string title, bool checkOut)
     if(bookIndex < 0)
     {
         return checkResults::BookNotFound;
-    }//END if
+    }//END if(bookIndex < 0)
+    else if(checkOut == Books[bookIndex].isCheckedOut())
+    {
+        if(checkOut)
+        {
+            return checkResults::BookAlreadyCheckedOut;
+        }//END if(checkOut)
+        else
+        {
+            return checkResults::BookAlreadyCheckedIn;
+        }//END inner else
+    }//END else if
     
     Books[bookIndex].checkInOrOut(checkOut); // check out or in book
     return checkResults::Success;

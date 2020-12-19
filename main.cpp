@@ -10,11 +10,14 @@
 #include "Book.hpp"
 #include "Inventory.hpp"
 #include "checkResult.h"
-
+#include "User.hpp"
 
 using namespace std;
 
 Inventory _inventory;
+vector<User> _users;
+User _loggedInUser;
+
 
 void addNewBook()
 {
@@ -62,66 +65,85 @@ void checkBook(bool checkOut)
     {
         cout << "Book checked " + checkCommand + "!" << endl;
     }
+    else if(result == checkResults::BookAlreadyCheckedIn ||
+            result == checkResults::BookAlreadyCheckedOut  )
+    {
+        cout << "Book already checked " + checkCommand << endl;
+    }
     else
     {
         cout << "Book failed checking " + checkCommand + "!" << endl;
     }
-}
+}//END checkBook()
 
-//void checkOutBook()
-//{
-//    cout << "Enter a book title to check out: ";
-//    string title;
-//    getline(cin, title);
-//    cout << endl;
-//
-//    int foundBookIndx =_inventory.searchByTitle(title);
-//
-//    if(foundBookIndx >=0) // if book found
-//    {
-//        Book* foundBook = _inventory.getBookByIndex(foundBookIndx); // get pointer to found book
-//
-//        if(foundBook->CheckedOut) // if book is already checked out
-//        {
-//            cout << "Book already checked out" << endl;
-//            return;
-//        }//END inner if
-//
-//        _inventory.checkOutBook(foundBook); // Check out book
-//        cout << "Book checked out" << endl;
-//    }//END if
-//    else
-//    {
-//        cout << "Book not found" << endl;
-//    }//END else
-//}//END checkOutBook
-//
-//void checkInBook()
-//{
-//    cout << "Enter a book title to check in: ";
-//    string title;
-//    getline(cin, title);
-//    cout << endl;
-//
-//    int foundBookIndx =_inventory.searchByTitle(title); // Get book index
-//
-//    if(foundBookIndx >=0)
-//    {
-//        Book *foundBook = _inventory.getBookByIndex(foundBookIndx); // Get pointer to book
-//
-//        if(!foundBook->CheckedOut)
-//        {
-//            cout << "Book already checked in" << endl;
-//            return;
-//        }//END inner if
-//        _inventory.checkInBook(foundBook);
-//        cout << "Book checked in" << endl;
-//    }//END outer if
-//    else
-//    {
-//        cout << "Book not found" << endl;
-//    }//END else
-//}//END checkInBook
+void createAccount()
+{
+    User newUser;
+    
+    cout << "First name: " << endl;
+    string firstName;
+    getline(cin, newUser.firstName);
+    
+    cout << "Last name: " << endl;
+    string lastNAme;
+    getline(cin, newUser.lastName);
+    
+    cout << "Username: " << endl;
+    string userName;
+    getline(cin, newUser.userName);
+    
+    cout << "Select a role:" << endl;
+    cout << "1. Admin" << endl;
+    cout << "2. Employee" << endl;
+    cout << "3. Member" << endl;
+    
+    int roleOption;
+    cin >> roleOption;
+    cin.ignore();
+    
+    if(roleOption == 1)
+        newUser.Role = Role::Admin;
+    else if(roleOption == 2)
+        newUser.Role = Role::Employee;
+    else if(roleOption == 3)
+        newUser.Role = Role::Member;
+    
+    _users.push_back(newUser);
+    
+}//END createAccount()
+
+void login()
+{
+    cout << "Choose an option:" << endl;
+    cout << "1. Log In" << endl;
+    cout << "2. Create an account" << endl;
+    
+    int option;
+    cin >> option;
+    cin.ignore();
+
+    if(option == 2)
+    {
+        createAccount();
+    }//END if
+    
+    
+    cout << "Enter username: ";
+    string userName;
+    getline(cin,userName);
+
+    User user;
+    user.userName = userName;
+    
+    vector<User>::iterator it = find(_users.begin(), _users.end(), user);
+    
+    if (it != _users.end())
+    {
+        _loggedInUser = _users[it - _users.begin()];
+        
+    }//END if
+    
+}//END login()
 
 void removeBook()
 {
@@ -133,25 +155,33 @@ void removeBook()
     
     _inventory.removeBook(title); // add newBook to inventory
     cout << title << "removed" << endl;
-}//END removeBook
+}//END removeBook()
 
 void viewCheckedOutBooks()
 {
     _inventory.displayCheckedOutBooks();
-}//END viewCheckedOutBooks
+}//END viewCheckedOutBooks()
 
 int main(int argc, const char * argv[])
 {
+    login();
     while (true)
     {
         // show input option
+        cout << endl;
         cout << "Choose an option:" << endl;
-        cout << "1. Add Book" << endl;
+        
+        if(_loggedInUser.Role == Role::Admin ||
+           _loggedInUser.Role == Role::Employee)
+        {
+            cout << "1. Add Book" << endl;
+            cout << "5. Remove Book from Inventory" << endl;
+            cout << "6. View Checked Out Books" << endl;
+        }
+        
         cout << "2. View Inventory" << endl;
         cout << "3. Check Out Book" << endl;
         cout << "4. Check In Book" << endl;
-        cout << "5. Remove Book from Inventory" << endl;
-        cout << "6. View Checked Out Books" << endl;
         
         cout << "0. Exit" << endl << endl;
         
@@ -173,10 +203,10 @@ int main(int argc, const char * argv[])
                 listInventory();
                 break;
             case 3:
-                checkBook(false);
+                checkBook(true);
                 break;
             case 4:
-                checkBook(true);
+                checkBook(false);
                 break;
             case 5:
                 removeBook();
@@ -189,5 +219,5 @@ int main(int argc, const char * argv[])
                 break;
         }//END switch
     }//END while
-}//END main
+}//END main()
 
